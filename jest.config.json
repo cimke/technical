@@ -1,0 +1,23 @@
+{
+  "moduleFileExtensions": ["js", "json", "ts"],
+  "modulePaths": ["src/utils"],
+  "testRegex": ".*\\.spec\\.ts$",
+  "transform": {
+    "^.+\\.(t|j)s$": "ts-jest"
+  },
+  "collectCoverageFrom": [
+    "src/**/*.ts",
+    "!src/*.ts",
+    "!src/**/*.d.ts",
+    "!src/infrastructure/persistence/migration/*.ts",
+    "!src/infrastructure/persistence/entities/*.ts"
+  ],
+  "testPathIgnorePatterns": [
+    "<rootDir>/dist/",
+    "<rootDir>/node_modules/",
+    "<rootDir>/src/infrastructure/persistence/migration/",
+    "<rootDir>/src/infrastructure/persistence/entities/"
+  ],
+  "coverageDirectory": "coverage",
+  "testEnvironment": "node"
+}
