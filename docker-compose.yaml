@@ -1,7 +1,14 @@
-version: '3.9'
-
 services:
-  # :O where did it go
+  app:
+    build:
+      context: .
+      target: dev
+    ports:
+      - 4001:4001
+    environment:
+      - PORT=4001
+    depends_on:
+      - postgres
 
   postgres:
     image: postgres:12.5
