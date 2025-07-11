@@ -1,3 +1,4 @@
+
 # technical-task
 
 The goal of this task is to complete this incomplete service while adding an GraphQL entrypoint for it.
@@ -32,4 +33,9 @@ export class TeamResource {
   @Directive('@external')
   readonly id!: string;
 }
+```
+
+### Run a migration
+```
+  run migration:docker-compose exec app npm run mikro-orm migration:up
 ```

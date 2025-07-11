@@ -1,4 +1,5 @@
 import { Options } from '@mikro-orm/core';
+import { RequestMethod } from '@nestjs/common';
 import { registerAs } from '@nestjs/config';
 import { Params } from 'nestjs-pino';
 import pino from 'pino';
@@ -40,7 +41,7 @@ export const CONFIG = {
   APP: registerAs<AppOptions>(CONSTANTS.APP, (): AppOptions => {
     return {
       host: defaultAppOptions.host,
-      port: Number(process.env.PORT) || 4000,
+      port: Number(process.env.PORT) || defaultAppOptions.port,
       prefix: process.env.APP_PREFIX || defaultAppOptions.prefix,
       version: process.env.APP_VERSION || defaultAppOptions.version,
       environment: process.env.APP_ENV || defaultAppOptions.environment,
@@ -51,6 +52,8 @@ export const CONFIG = {
   LOGGER: registerAs<Params>(CONSTANTS.LOGGER, (): Params => {
     return {
       exclude: [
+        { path: 'graphiql', method: RequestMethod.ALL },
+        { path: '_health', method: RequestMethod.GET },
         // Maybe there is something to exclude?
       ],
       pinoHttp: {
@@ -62,7 +65,7 @@ export const CONFIG = {
           messageKey: 'message',
           timestamp: () => `,"timestamp":"${new Date().toISOString()}"`,
           formatters: {
-            level: (level) => ({ level }),
+            level: (level: string) => ({ level }),
           },
           base: {
             environment: process.env.APP_ENV || defaultAppOptions.environment,

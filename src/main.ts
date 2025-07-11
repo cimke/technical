@@ -1,12 +1,15 @@
 import { Options } from '@mikro-orm/core';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
-import { Module } from '@nestjs/common';
+import { ApolloDriver } from '@nestjs/apollo';
+import { Module, RequestMethod } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
+import { GraphQLModule } from '@nestjs/graphql';
 import { Logger, LoggerModule, Params, PinoLogger } from 'nestjs-pino';
 
 import { AppOptions, CONFIG } from './config';
 import { PlayerServiceImpl } from './domain/services/manager';
+import { PlayerResolver } from './entrypoints/player.resolver';
 import { factory } from './framework/provider';
 import { HealthCheckModule } from './infrastructure/health-check/module';
 import { PlayerEntity } from './infrastructure/persistence/entities/player';
@@ -20,8 +23,14 @@ import { PlayerRepositoryImpl } from './infrastructure/persistence/repositories/
     MikroOrmModule.forMiddleware(),
     LoggerModule.forRoot(CONFIG.LOGGER() as Params),
     HealthCheckModule,
+    GraphQLModule.forRoot({
+      driver: ApolloDriver,
+      autoSchemaFile: true,
+      playground: true,
+      path: '/graphiql',
+    }),
   ],
-  providers: [factory(PlayerServiceImpl, [PlayerRepositoryImpl])],
+  providers: [factory(PlayerServiceImpl, [PlayerRepositoryImpl]), PlayerResolver],
   controllers: [],
 })
 export class MainModule {
@@ -31,12 +40,19 @@ export class MainModule {
 
     try {
       const app = await NestFactory.create(MainModule, {
-        // Maybe something goes here
+        bufferLogs: true,
+        logger,
+        cors: {
+          origin: process.env.CORS_ORIGIN || '*',
+          credentials: true,
+        },
       });
 
       app.enableCors({ origin: options.allowedOrigins || false });
       // graphql does not register route name globally so middleware never gets applied if it's not excluded
-      app.setGlobalPrefix(options.prefix, { exclude: ['graphql'] });
+      app.setGlobalPrefix(options.prefix, {
+        exclude: [{ path: '/', method: RequestMethod.GET }, 'graphiql'],
+      });
       app.useLogger(logger);
       app.flushLogs();
 
