@@ -1,20 +1,19 @@
 import { Options } from '@mikro-orm/core';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
-import { Module } from '@nestjs/common';
+import { ApolloDriver } from '@nestjs/apollo';
+import { Module, RequestMethod } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
-import { Logger, LoggerModule, Params, PinoLogger } from 'nestjs-pino';
 import { GraphQLModule } from '@nestjs/graphql';
-import { ApolloDriver } from '@nestjs/apollo';
-import { RequestMethod } from '@nestjs/common';
+import { Logger, LoggerModule, Params, PinoLogger } from 'nestjs-pino';
 
 import { AppOptions, CONFIG } from './config';
 import { PlayerServiceImpl } from './domain/services/manager';
+import { PlayerResolver } from './entrypoints/player.resolver';
 import { factory } from './framework/provider';
 import { HealthCheckModule } from './infrastructure/health-check/module';
 import { PlayerEntity } from './infrastructure/persistence/entities/player';
 import { PlayerRepositoryImpl } from './infrastructure/persistence/repositories/player';
-import { PlayerResolver } from './entrypoints/player.resolver';
 
 @Module({
   imports: [
@@ -52,10 +51,7 @@ export class MainModule {
       app.enableCors({ origin: options.allowedOrigins || false });
       // graphql does not register route name globally so middleware never gets applied if it's not excluded
       app.setGlobalPrefix(options.prefix, {
-        exclude: [
-          { path: '/', method: RequestMethod.GET },
-          'graphiql',
-        ],
+        exclude: [{ path: '/', method: RequestMethod.GET }, 'graphiql'],
       });
       app.useLogger(logger);
       app.flushLogs();

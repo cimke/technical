@@ -1,5 +1,6 @@
-import { Resolver, Query, Mutation, Args, ID, ObjectType, Field } from '@nestjs/graphql';
 import { Inject } from '@nestjs/common';
+import { Args, Field, ID, Mutation, ObjectType, Query, Resolver } from '@nestjs/graphql';
+
 import { PlayerServiceImpl } from '../domain/services/manager';
 
 @ObjectType()
@@ -55,4 +56,4 @@ export class PlayerResolver {
       this.handleError(error);
     }
   }
-} 
+}

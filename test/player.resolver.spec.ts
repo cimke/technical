@@ -1,6 +1,7 @@
 import { Test } from '@nestjs/testing';
-import { PlayerResolver } from '../src/entrypoints/player.resolver';
+
 import { PlayerServiceImpl } from '../src/domain/services/manager';
+import { PlayerResolver } from '../src/entrypoints/player.resolver';
 
 const mockPlayerService = {
   createPlayer: jest.fn(),
@@ -13,10 +14,7 @@ describe('PlayerResolver', () => {
 
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
-      providers: [
-        PlayerResolver,
-        { provide: PlayerServiceImpl, useValue: mockPlayerService },
-      ],
+      providers: [PlayerResolver, { provide: PlayerServiceImpl, useValue: mockPlayerService }],
     }).compile();
 
     resolver = moduleRef.get(PlayerResolver);

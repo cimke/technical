@@ -1,11 +1,11 @@
 import { Options } from '@mikro-orm/core';
+import { RequestMethod } from '@nestjs/common';
 import { registerAs } from '@nestjs/config';
 import { Params } from 'nestjs-pino';
 import pino from 'pino';
 
 import { CONSTANTS } from './constants';
 import { errorSerializer } from './infrastructure/logging/serializer';
-import { RequestMethod } from '@nestjs/common';
 
 export type AppOptions = {
   readonly allowedOrigins?: string;
