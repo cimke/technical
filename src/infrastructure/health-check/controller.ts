@@ -8,4 +8,9 @@ export class HealthCheckController {
   async getHealthCheck(): Promise<HealthCheckResource> {
     return new HealthCheckResource('UP');
   }
+
+  @Get('/')
+  async getRoot(): Promise<string> {
+    return 'hello';
+  }
 }
